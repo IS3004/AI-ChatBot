@@ -1,0 +1,137 @@
+.chat-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Chat Page Header ────────────────────────────────────────── */
+.chat-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-primary);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.header-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.header-icon {
+  font-size: 1rem;
+}
+
+.header-chat-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 420px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ─── Export Dropdown ─────────────────────────────────────────── */
+.export-wrapper {
+  position: relative;
+}
+
+.export-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 0.35rem 0.7rem;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.export-trigger-btn:hover {
+  background: var(--bg-input);
+  border-color: var(--border-light);
+  color: var(--text-primary);
+}
+.export-trigger-btn svg {
+  width: 13px;
+  height: 13px;
+}
+
+.export-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  min-width: 160px;
+  z-index: 50;
+  animation: fadeIn 0.15s ease;
+}
+
+.export-dropdown button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border-radius: 4px;
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s, color 0.15s;
+}
+.export-dropdown button:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+}
+
+/* ─── Loading & Error States ──────────────────────────────────── */
+.chat-page-loading,
+.chat-page-error {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.chat-page-error p {
+  max-width: 400px;
+  text-align: center;
+  line-height: 1.6;
+  font-size: 0.9rem;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

@@ -1,0 +1,24 @@
+{
+  "name": "ai-chatgpt-clone-server",
+  "version": "1.0.0",
+  "description": "Backend for Full-Stack ChatGPT Clone",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "@clerk/clerk-sdk-node": "^5.0.0",
+    "@clerk/express": "^2.1.64",
+    "@google/generative-ai": "^0.21.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "imagekit": "^5.2.0",
+    "mongoose": "^8.7.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

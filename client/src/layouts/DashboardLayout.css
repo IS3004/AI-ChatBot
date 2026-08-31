@@ -1,0 +1,103 @@
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ─── Sidebar ─────────────────────────────────────────────────────── */
+.sidebar {
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 0.25s ease, transform 0.25s ease;
+  z-index: 40;
+}
+
+.dashboard-layout.sidebar-collapsed .sidebar {
+  width: 0;
+  min-width: 0;
+  border-right: none;
+}
+
+/* ─── Main Content ────────────────────────────────────────────────── */
+.dashboard-main {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* Top bar with toggle button */
+.layout-topbar {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  z-index: 25;
+}
+
+.sidebar-toggle-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.sidebar-toggle-btn:hover {
+  background: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-light);
+}
+.sidebar-toggle-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.dashboard-outlet-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Mobile Responsive Drawer ────────────────────────────────────── */
+.mobile-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    min-width: 280px;
+    transform: translateX(-100%);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+  }
+
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  .mobile-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 35;
+  }
+}

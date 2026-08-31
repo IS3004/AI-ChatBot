@@ -1,0 +1,242 @@
+.chat-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ─── Header ──────────────────────────────────────────────────── */
+.chat-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.sidebar-logo .logo-icon {
+  color: var(--accent);
+}
+
+/* ─── New Chat ────────────────────────────────────────────────── */
+.new-chat-area {
+  padding: 0.75rem 0.75rem 0.4rem;
+  flex-shrink: 0;
+}
+
+.new-chat-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.new-chat-btn:hover {
+  background: var(--bg-secondary);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+.new-chat-btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ─── Search Bar ──────────────────────────────────────────────── */
+.sidebar-search {
+  margin: 0.25rem 0.75rem 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  flex-shrink: 0;
+}
+.sidebar-search svg {
+  width: 13px;
+  height: 13px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+.sidebar-search-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  width: 100%;
+}
+.sidebar-search-input::placeholder {
+  color: var(--text-muted);
+}
+.search-clear-btn {
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 0 2px;
+}
+.search-clear-btn:hover {
+  color: var(--text-primary);
+}
+
+/* ─── Chat Nav ────────────────────────────────────────────────── */
+.chat-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.25rem 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-nav-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 0.35rem 0.5rem 0.25rem;
+}
+
+/* ─── Chat Item Wrapper ───────────────────────────────────────── */
+.chat-item-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+  transition: background 0.15s;
+}
+
+.chat-item-wrapper:hover,
+.chat-item-wrapper.active {
+  background: var(--bg-secondary);
+}
+.chat-item-wrapper.active {
+  background: rgba(16, 163, 127, 0.1);
+  border: 1px solid rgba(16, 163, 127, 0.25);
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  overflow: hidden;
+  flex: 1;
+}
+.chat-item-wrapper.active .chat-item {
+  color: var(--text-primary);
+}
+.chat-item svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.chat-item-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ─── Action Buttons (Rename & Delete) ────────────────────────── */
+.chat-item-actions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  padding-right: 0.4rem;
+}
+
+.chat-item-wrapper:hover .chat-item-actions {
+  display: flex;
+}
+
+.item-action-btn {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  transition: color 0.15s, background 0.15s;
+}
+.item-action-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+.item-action-btn.delete:hover {
+  color: #e05252;
+  background: rgba(224, 82, 82, 0.15);
+}
+.item-action-btn svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ─── Inline Rename ───────────────────────────────────────────── */
+.inline-rename-form {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+}
+.inline-rename-input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-size: 0.825rem;
+  padding: 0.25rem 0.4rem;
+  outline: none;
+}
+
+/* ─── States ──────────────────────────────────────────────────── */
+.sidebar-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0.25rem 0;
+}
+
+.skeleton-item {
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-secondary);
+  animation: shimmer 1.5s infinite;
+  background-size: 200% 100%;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.sidebar-error,
+.sidebar-empty {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  padding: 0.5rem;
+  text-align: center;
+  line-height: 1.5;
+}

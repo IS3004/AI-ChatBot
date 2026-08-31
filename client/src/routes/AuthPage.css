@@ -1,0 +1,54 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: 2rem;
+}
+
+/* ─── High-Contrast Social Button Styles ──────────────────────── */
+.clerk-social-button,
+.cl-socialButtonsBlockButton {
+  background-color: #262626 !important;
+  border: 1px solid #3d3d3d !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  transition: background-color 0.15s, border-color 0.15s !important;
+}
+
+.clerk-social-button:hover,
+.cl-socialButtonsBlockButton:hover {
+  background-color: #333333 !important;
+  border-color: #555555 !important;
+}
+
+.clerk-social-button-text,
+.cl-socialButtonsBlockButtonText {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+}
+
+/* ─── Additional Clerk UI Dark Overrides ───────────────────────── */
+.cl-card,
+.cl-signIn-root,
+.cl-signUp-root {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6) !important;
+}
+
+.cl-dividerText {
+  color: #888888 !important;
+}
+
+.cl-formFieldLabel {
+  color: #e0e0e0 !important;
+}
+
+.cl-formButtonPrimary {
+  background-color: var(--accent) !important;
+  color: #ffffff !important;
+}
+.cl-formButtonPrimary:hover {
+  background-color: var(--accent-hover) !important;
+}

@@ -1,0 +1,13 @@
+Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+const require_eventBus = require('./eventBus.js');
+
+//#region src/clerkEventBus.ts
+const clerkEvents = { Status: "status" };
+const createClerkEventBus = () => {
+	return require_eventBus.createEventBus();
+};
+
+//#endregion
+exports.clerkEvents = clerkEvents;
+exports.createClerkEventBus = createClerkEventBus;
+//# sourceMappingURL=clerkEventBus.js.map
