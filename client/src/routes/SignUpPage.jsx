@@ -9,6 +9,7 @@ const SignUpPage = () => {
         path="/sign-up"
         routing="path"
         signInUrl="/sign-in"
+        afterSignUpUrl="/dashboard"
         redirectUrl="/dashboard"
         appearance={{
           baseTheme: dark,
