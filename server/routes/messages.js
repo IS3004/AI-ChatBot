@@ -9,6 +9,32 @@ dotenv.config();
 const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Ordered fallback list – first available model wins
+const MODEL_FALLBACKS = ["gemini-1.5-flash", "gemini-1.5-pro"];
+
+/**
+ * Retries an async fn up to `maxRetries` times on 503 / 429 errors,
+ * using exponential back-off (1 s, 2 s, 4 s …).
+ */
+async function retryWithBackoff(fn, maxRetries = 3) {
+  let lastErr;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const isRetryable =
+        err?.status === 503 || err?.status === 429 ||
+        /503|429|overloaded|unavailable/i.test(err?.message || "");
+      if (!isRetryable || attempt === maxRetries - 1) throw err;
+      const delay = 1000 * Math.pow(2, attempt); // 1 s, 2 s, 4 s
+      console.warn(`Gemini ${err.status ?? ""} – retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+      await new Promise((r) => setTimeout(r, delay));
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+}
+
 const PERSONA_PROMPTS = {
   general:
     "You are a helpful, knowledgeable, and friendly AI assistant. Format your responses with markdown when appropriate — use code blocks for code, bold for emphasis, and bullet points for lists. Be concise but thorough.",
@@ -48,21 +74,11 @@ router.post("/:id/chat", requireAuth, async (req, res) => {
 
     const systemInstruction = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS.general;
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
-      systemInstruction,
-    });
-
     // Clean stored history to strictly conform to Gemini's expected format (no _id fields)
     const history = chat.history.map((msg) => ({
       role: msg.role,
       parts: (msg.parts || []).map((p) => ({ text: p.text || "" })),
     }));
-
-    const chatSession = model.startChat({
-      history,
-      generationConfig: { maxOutputTokens: 8192, temperature: 0.7 },
-    });
 
     const parts = [];
 
@@ -80,14 +96,33 @@ router.post("/:id/chat", requireAuth, async (req, res) => {
 
     parts.push({ text: question });
 
+    // Try each model in the fallback list until one succeeds
     let fullAnswer = "";
-    const result = await chatSession.sendMessageStream(parts);
+    let streamSucceeded = false;
 
-    for await (const chunk of result.stream) {
-      const text = chunk.text();
-      if (text) {
-        fullAnswer += text;
-        sendEvent({ text });
+    for (const modelName of MODEL_FALLBACKS) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName, systemInstruction });
+        const chatSession = model.startChat({
+          history,
+          generationConfig: { maxOutputTokens: 8192, temperature: 0.7 },
+        });
+
+        const result = await retryWithBackoff(() => chatSession.sendMessageStream(parts));
+
+        for await (const chunk of result.stream) {
+          const text = chunk.text();
+          if (text) {
+            fullAnswer += text;
+            sendEvent({ text });
+          }
+        }
+        streamSucceeded = true;
+        break; // done – no need to try next model
+      } catch (modelErr) {
+        console.warn(`Model ${modelName} failed:`, modelErr?.message ?? modelErr);
+        if (modelName === MODEL_FALLBACKS[MODEL_FALLBACKS.length - 1]) throw modelErr;
+        // otherwise loop continues to next fallback
       }
     }
 

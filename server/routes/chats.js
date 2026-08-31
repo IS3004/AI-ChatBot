@@ -10,6 +10,32 @@ dotenv.config();
 const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// Ordered fallback list – first available model wins
+const MODEL_FALLBACKS = ["gemini-1.5-flash", "gemini-1.5-pro"];
+
+/**
+ * Retries an async fn up to `maxRetries` times on 503 / 429 errors,
+ * using exponential back-off (1 s, 2 s, 4 s …).
+ */
+async function retryWithBackoff(fn, maxRetries = 3) {
+  let lastErr;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const isRetryable =
+        err?.status === 503 || err?.status === 429 ||
+        /503|429|overloaded|unavailable/i.test(err?.message || "");
+      if (!isRetryable || attempt === maxRetries - 1) throw err;
+      const delay = 1000 * Math.pow(2, attempt); // 1 s, 2 s, 4 s
+      console.warn(`Gemini ${err.status ?? ""} – retrying in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+      await new Promise((r) => setTimeout(r, delay));
+      lastErr = err;
+    }
+  }
+  throw lastErr;
+}
+
 const PERSONA_PROMPTS = {
   general:
     "You are a helpful, knowledgeable, and friendly AI assistant. Format your responses with markdown when appropriate — use code blocks for code, bold for emphasis, and bullet points for lists. Be concise but thorough.",
@@ -34,18 +60,21 @@ router.post("/", requireAuth, async (req, res) => {
   try {
     const systemInstruction = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS.general;
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-3.6-flash",
-      systemInstruction,
-    });
-
+    // Try each model in the fallback list until one succeeds
     let initialAnswer = "";
-    try {
-      const result = await model.generateContent(text);
-      initialAnswer = result.response.text();
-    } catch (aiErr) {
-      console.error("Gemini initial generation error:", aiErr);
-      initialAnswer = "I received your message. How can I help you further?";
+    for (const modelName of MODEL_FALLBACKS) {
+      try {
+        const model = genAI.getGenerativeModel({ model: modelName, systemInstruction });
+        const result = await retryWithBackoff(() => model.generateContent(text));
+        initialAnswer = result.response.text();
+        break; // success – stop trying fallbacks
+      } catch (aiErr) {
+        console.warn(`Model ${modelName} failed during initial generation:`, aiErr?.message ?? aiErr);
+        if (modelName === MODEL_FALLBACKS[MODEL_FALLBACKS.length - 1]) {
+          console.error("All models exhausted. Using placeholder.");
+          initialAnswer = "I received your message. How can I help you further?";
+        }
+      }
     }
 
     const history = [
@@ -113,12 +142,20 @@ router.get("/:id", requireAuth, async (req, res) => {
     ) {
       try {
         const lastUserMessage = chat.history[chat.history.length - 1].parts[0].text;
-        const model = genAI.getGenerativeModel({
-          model: "gemini-3.6-flash",
-          systemInstruction: PERSONA_PROMPTS.general,
-        });
-        const result = await model.generateContent(lastUserMessage);
-        const replyText = result.response.text();
+        let replyText = "";
+        for (const modelName of MODEL_FALLBACKS) {
+          try {
+            const model = genAI.getGenerativeModel({
+              model: modelName,
+              systemInstruction: PERSONA_PROMPTS.general,
+            });
+            const result = await retryWithBackoff(() => model.generateContent(lastUserMessage));
+            replyText = result.response.text();
+            break;
+          } catch (mErr) {
+            console.warn(`Auto-heal model ${modelName} failed:`, mErr?.message ?? mErr);
+          }
+        }
 
         if (replyText) {
           chat.history.push({
