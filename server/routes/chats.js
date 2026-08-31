@@ -11,7 +11,7 @@ const router = express.Router();
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 // Ordered fallback list – first available model wins
-const MODEL_FALLBACKS = ["gemini-1.5-flash", "gemini-1.5-pro"];
+const MODEL_FALLBACKS = ["gemini-2.0-flash", "gemini-2.0-flash-lite"];
 
 /**
  * Retries an async fn up to `maxRetries` times on 503 / 429 errors,
