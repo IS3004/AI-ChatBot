@@ -17,7 +17,7 @@ const MODEL_FALLBACKS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"];
  * Retries an async fn up to `maxRetries` times on 503 / 429 errors,
  * using exponential back-off (1 s, 2 s, 4 s …).
  */
-async function retryWithBackoff(fn, maxRetries = 3) {
+async function retryWithBackoff(fn, maxRetries = 2) {
   let lastErr;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
