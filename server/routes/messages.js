@@ -12,6 +12,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 // Ordered fallback list – first available model wins
 const MODEL_FALLBACKS = ["gemini-3.6-flash", "gemini-3.5-flash-lite"];
 
+
 /**
  * Retries an async fn up to `maxRetries` times on 503 / 429 errors,
  * using exponential back-off (1 s, 2 s, 4 s …).
@@ -49,6 +50,7 @@ const PERSONA_PROMPTS = {
  * Streams a Gemini response with persona support and clean history mapping.
  */
 router.post("/:id/chat", requireAuth, async (req, res) => {
+  console.time("TOTAL REQUEST");
   const { userId } = req;
   const { question, img, persona = "general" } = req.body;
 
@@ -66,7 +68,10 @@ router.post("/:id/chat", requireAuth, async (req, res) => {
   };
 
   try {
+    // const chat = await Chat.findOne({ _id: req.params.id, userId });
+    console.time("MongoDB FIND");
     const chat = await Chat.findOne({ _id: req.params.id, userId });
+    console.timeEnd("MongoDB FIND");
     if (!chat) {
       sendEvent({ error: "Chat not found." });
       return res.end();
@@ -75,10 +80,17 @@ router.post("/:id/chat", requireAuth, async (req, res) => {
     const systemInstruction = PERSONA_PROMPTS[persona] || PERSONA_PROMPTS.general;
 
     // Clean stored history to strictly conform to Gemini's expected format (no _id fields)
-    const history = chat.history.map((msg) => ({
-      role: msg.role,
-      parts: (msg.parts || []).map((p) => ({ text: p.text || "" })),
-    }));
+    // const history = chat.history.map((msg) => ({
+    //   role: msg.role,
+    //   parts: (msg.parts || []).map((p) => ({ text: p.text || "" })),
+    // }));
+
+    const history = chat.history
+  .slice(-20)
+  .map((msg) => ({
+    role: msg.role,
+    parts: msg.parts.map((p) => ({ text: p.text })),
+  }));
 
     const parts = [];
 
