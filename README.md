@@ -1,8 +1,8 @@
-# 🤖 Full-Stack AI Chat — ChatGPT Clone (Claude Edition)
+# 🤖 Full-Stack AI ChatBot
 
-A production-ready ChatGPT clone built with **React + Vite**, **Node.js/Express**, **MongoDB**, **Claude AI** (Anthropic), **Clerk** authentication, and **ImageKit** for image uploads.
+A production-ready ChatBot built with **React + Vite**, **Node.js/Express**, **MongoDB**, **Gemini AI** , **Clerk** authentication, and **ImageKit** for image uploads.
 
-> **Security**: The Anthropic API key lives exclusively on the server. The client never touches it. Claude is called server-side and responses are streamed back via SSE.
+> **Security**: The Gemini API key lives exclusively on the server. The client never touches it. Gemini is called server-side and responses are streamed back via SSE.
 
 ---
 
@@ -26,7 +26,7 @@ A production-ready ChatGPT clone built with **React + Vite**, **Node.js/Express*
 | Routing | react-router-dom v6 |
 | State | TanStack React Query |
 | Auth | Clerk |
-| AI | Claude 3.5 Haiku (Anthropic) — server-side |
+| AI | Gemini 3.5 — server-side |
 | Images | ImageKit |
 | Backend | Node.js + Express |
 | Database | MongoDB + Mongoose |
@@ -39,12 +39,11 @@ A production-ready ChatGPT clone built with **React + Vite**, **Node.js/Express*
 
 | Service | Where to get it | Free? |
 |---|---|---|
-| **Anthropic Claude** | [console.anthropic.com](https://console.anthropic.com) → API Keys | ⚠️ Paid (cheap) |
+| **Gemini** | [console.Gemini.com](https://console.Gemini.com) → API Keys | ✅ Free |
 | **Clerk** | [clerk.com](https://clerk.com) → Create App | ✅ Yes |
 | **ImageKit** | [imagekit.io](https://imagekit.io) → Settings → API Keys | ✅ Yes |
 | **MongoDB** | [mongodb.com/atlas](https://mongodb.com/atlas) → Connect | ✅ Free tier |
 
-> 💡 **Claude pricing**: Claude 3.5 Haiku is very affordable (~\$0.0008 per 1K input tokens). A typical chat message costs less than \$0.001.
 
 ---
 
@@ -59,7 +58,7 @@ CLIENT_URL=http://localhost:5173
 IMAGEKIT_PUBLIC_KEY=public_...
 IMAGEKIT_PRIVATE_KEY=private_...
 IMAGEKIT_URL_ENDPOINT=https://ik.imagekit.io/your_id
-ANTHROPIC_API_KEY=sk-ant-...
+Gemini_API_KEY=AQ-...
 ```
 
 #### `client/.env`
@@ -105,7 +104,7 @@ Open **http://localhost:5173** 🎉
 ## 📁 Project Structure
 
 ```
-ai-chatgpt-clone/
+ai-chatBot/
 ├── client/                    # React + Vite frontend
 │   ├── src/
 │   │   ├── components/
